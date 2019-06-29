@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.zhaoshaung.excelprocess.Exception.ProcessExcellException.*;
 import static com.zhaoshaung.excelprocess.utils.Consts.*;
 
 /**
@@ -94,6 +95,14 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         return true;
     }
 
+    /**
+     * 处理每行
+     *
+     * @param row 行
+     * @param map 空map
+     * @return 储存对象
+     * @throws ProcessExcellException 自定异常
+     */
     private BackUpMoveTarget process(Row row, Map<Integer, String> map) throws ProcessExcellException {
         //行号
         int rowIndex = row.getRowNum();

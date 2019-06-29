@@ -9,12 +9,10 @@ import java.time.format.DateTimeFormatter;
  * @description
  */
 public class Consts {
-
+    /**
+     * 格式化日期
+     */
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    public static final int PE_EXCEPTION_CODE = 50003;
-    public static final int EMPTY_VALUE_EXCEPTION_CODE = 50001;
-    public static final int FILE_FORMAT_EXCEPTION_CODE = 50002;
 
     /**
      * 表格字段
