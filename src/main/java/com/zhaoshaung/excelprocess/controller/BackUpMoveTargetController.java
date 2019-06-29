@@ -1,5 +1,7 @@
 package com.zhaoshaung.excelprocess.controller;
 
+import com.zhaoshaung.excelprocess.Exception.ProcessExcellException;
+import com.zhaoshaung.excelprocess.model.Resp;
 import com.zhaoshaung.excelprocess.service.ExcelProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * @author xiaoyunfeng
@@ -29,8 +33,9 @@ public class BackUpMoveTargetController {
      * @return boolean是否成功
      */
     @PostMapping("/save")
-    boolean saveBackUpMoveTarget(@RequestParam("file") MultipartFile file) {
-        return excelProcessService.excelProcess(file);
+    Resp saveBackUpMoveTarget(@RequestParam("file") MultipartFile file) throws ProcessExcellException, IOException {
+        excelProcessService.excelProcess(file);
+        return Resp.Ok();
     }
 
 }

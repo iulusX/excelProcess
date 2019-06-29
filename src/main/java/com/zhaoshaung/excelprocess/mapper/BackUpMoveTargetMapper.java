@@ -2,6 +2,7 @@ package com.zhaoshaung.excelprocess.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zhaoshaung.excelprocess.model.BackUpMoveTarget;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author xiaoyunfeng
@@ -9,5 +10,6 @@ import com.zhaoshaung.excelprocess.model.BackUpMoveTarget;
  * @time 21:56
  * @description
  */
-public interface BackUpMoveTargetmapper extends BaseMapper<BackUpMoveTarget> {
+@Mapper
+public interface BackUpMoveTargetMapper extends BaseMapper<BackUpMoveTarget> {
 }

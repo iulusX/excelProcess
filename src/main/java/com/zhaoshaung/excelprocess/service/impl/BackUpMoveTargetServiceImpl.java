@@ -1,10 +1,10 @@
 package com.zhaoshaung.excelprocess.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zhaoshaung.excelprocess.mapper.BackUpMoveTargetmapper;
+import com.zhaoshaung.excelprocess.mapper.BackUpMoveTargetMapper;
 import com.zhaoshaung.excelprocess.model.BackUpMoveTarget;
 import com.zhaoshaung.excelprocess.service.BackUpMoveTargetService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
  * @time 21:54
  * @description
  */
+@Slf4j
 @Service
-public class BackUpMoveTargetServiceImpl extends ServiceImpl<BackUpMoveTargetmapper, BackUpMoveTarget> implements BackUpMoveTargetService {
+public class BackUpMoveTargetServiceImpl extends ServiceImpl<BackUpMoveTargetMapper, BackUpMoveTarget> implements BackUpMoveTargetService {
 
     /**
      * 储存一条数据
@@ -24,6 +25,8 @@ public class BackUpMoveTargetServiceImpl extends ServiceImpl<BackUpMoveTargetmap
      */
     @Override
     public boolean saveBackUpMoveTarget(BackUpMoveTarget backUpMoveTarget) {
-        return save(backUpMoveTarget);
+        boolean isSuccess = save(backUpMoveTarget);
+        log.info("BackUpMoveTargetServiceImpl saveBackUpMoveTarget 保存成功啦～");
+        return isSuccess;
     }
 }

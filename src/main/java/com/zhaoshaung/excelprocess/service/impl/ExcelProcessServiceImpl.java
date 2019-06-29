@@ -1,6 +1,5 @@
 package com.zhaoshaung.excelprocess.service.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zhaoshaung.excelprocess.Exception.ProcessExcellException;
 import com.zhaoshaung.excelprocess.model.BackUpMoveTarget;
@@ -16,15 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.StreamSupport;
+
+import static com.zhaoshaung.excelprocess.utils.Consts.*;
 
 /**
  * @author xiaoyunfeng
@@ -50,13 +47,13 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
         if (Objects.isNull(file)) {
             log.info("ExcelProcessServiceImpl excelProcess 传入file为null");
-            throw new ProcessExcellException(50001, "传入文件为空");
+            throw new ProcessExcellException(EMPTY_VALUE_EXCEPTION_CODE, "传入文件为空");
         }
         String fileName = file.getOriginalFilename();
 
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             log.info("ExcelProcessServiceImpl excelProcess 传入file的格式错误");
-            throw new ProcessExcellException(50002, "传入file的格式错误");
+            throw new ProcessExcellException(FILE_FORMAT_EXCEPTION_CODE, "传入file的格式错误");
         }
 
         //判断是不是2003
@@ -68,20 +65,20 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
         //获取文件输入流
         InputStream is = file.getInputStream();
-//        Workbook wb = null;
-//        if (isExcel2003) {
-//            wb = new HSSFWorkbook(is);
-//        } else {
-//            wb = new XSSFWorkbook(is);
-//        }
+        Workbook wb;
         //获取ecxcel操作对象
-        Workbook wb = new HSSFWorkbook(is);
+        if (isExcel2003) {
+            wb = new HSSFWorkbook(is);
+        } else {
+            wb = new XSSFWorkbook(is);
+        }
+
         //获取工作表的对象
         Sheet sheet = wb.getSheetAt(0);
 
         if (Objects.isNull(sheet)) {
             log.info("ExcelProcessServiceImpl excelProcess 工作表为空");
-            throw new ProcessExcellException(50003, "工作表为空");
+            throw new ProcessExcellException(PE_EXCEPTION_CODE, "工作表为空");
         }
 
 
@@ -90,42 +87,40 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         for (Row row : sheet) {
 
             BackUpMoveTarget backUpMoveTarget = process(row, valueMap);
-            //backUpMoveTargetService.saveBackUpMoveTarget(backUpMoveTarget);
+            backUpMoveTargetService.saveBackUpMoveTarget(backUpMoveTarget);
 
         }
 
         return true;
-
-
-        //return backUpMoveTargetService.saveBackUpMoveTarget(new BackUpMoveTarget());
     }
 
-    public BackUpMoveTarget process(Row row, Map<Integer, String> map) throws ProcessExcellException {
+    private BackUpMoveTarget process(Row row, Map<Integer, String> map) throws ProcessExcellException {
         //行号
         int rowIndex = row.getRowNum();
 
         for (Cell cell : row) {
             //列号
             int columnIndex = cell.getColumnIndex();
+            System.out.println(cell.getCellType());
 
-            if (Objects.equals(CellType.STRING, cell.getCellType())) {
-                throw new ProcessExcellException(50003, "导入失败, 第" + rowIndex + "行,请将第+" + columnIndex + "+列设为文本格式");
+            if (!Objects.equals(CellType.STRING, cell.getCellType())) {
+                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + "行,请将第" + columnIndex + "列设为文本格式");
             }
             String value = cell.getStringCellValue();
             log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex, columnIndex, value);
 
             if (StringUtils.isBlank(value)) {
-                throw new ProcessExcellException(50003, "导入失败, 第" + rowIndex + "行,第" + columnIndex + "行为空");
+                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + "行,第" + columnIndex + "行为空");
             }
             map.put(cell.getColumnIndex(), value);
         }
-        BackUpMoveTarget backUpMoveTarget =  BackUpMoveTarget.builder()
-                .histDate(LocalDateTime.parse(map.get(0), Consts.DATE_TIME_FORMATTER))
-                .tech(map.get(1))
-                .stage(map.get(2))
-                .p1Target(map.get(3))
-                .p2Target(map.get(4))
-                .remark(map.get(5))
+        BackUpMoveTarget backUpMoveTarget = BackUpMoveTarget.builder()
+                .histDate(LocalDateTime.parse(map.get(HIST_DATE), Consts.DATE_TIME_FORMATTER))
+                .tech(map.get(TECH))
+                .stage(map.get(STAGE))
+                .p1Target(map.get(P1_TARGET))
+                .p2Target(map.get(P2_TARGET))
+                .remark(map.get(REMARK))
                 .build();
         log.info("ExcelProcessServiceImpl process 生成的对象为 = {}", backUpMoveTarget);
         return backUpMoveTarget;
