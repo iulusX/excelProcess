@@ -1,6 +1,6 @@
 package com.zhaoshaung.excelprocess.advice;
 
-import com.zhaoshaung.excelprocess.Exception.ProcessExcellException;
+import com.zhaoshaung.excelprocess.exception.ProcessExcellException;
 import com.zhaoshaung.excelprocess.model.Resp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

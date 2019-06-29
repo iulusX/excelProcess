@@ -1,6 +1,6 @@
 package com.zhaoshaung.excelprocess.service;
 
-import com.zhaoshaung.excelprocess.Exception.ProcessExcellException;
+import com.zhaoshaung.excelprocess.exception.ProcessExcellException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
