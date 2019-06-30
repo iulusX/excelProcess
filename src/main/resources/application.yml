@@ -5,10 +5,21 @@ server:
 #数据库配置
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/db_zhaoshuang?characterEncoding=utf8&useSSL=false
+    #TODO 修改你的数据库连接地址
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    #TODO 修改你的数据库username
     username: root
-    password: 789789
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    #TODO 修改你的数据库密码
+    password: root
+    #TODO 修改你的数据库连接驱动
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+
+
+##   mysql使用的配置
+#    url: jdbc:mysql://localhost:3306/db_zhaoshuang?characterEncoding=utf8&useSSL=false
+#    username: root
+#    password: 789789
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 
 
 mybatis-plus:
@@ -17,7 +28,8 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-      db-type: mysql
+      #db-type: mysql
+      db-type: oracle
       field-strategy: not_null
       column-underline: true
   configuration:
