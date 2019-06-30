@@ -132,9 +132,6 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
             log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, cellNum + 1, value);
 
-//            if (StringUtils.isBlank(value)) {
-//                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + (rowIndex + 1) + "行,第" + (cellNum + 1) + "行为空");
-//            }
             map.put(cellNum, Optional.ofNullable(value).orElse(StringUtils.EMPTY));
         }
 
@@ -147,9 +144,6 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         } else{
             localDate = LocalDate.now();
         }
-//
-//
-//        System.out.println("============localDate = " + localDate);
 
         BackUpMoveTarget backUpMoveTarget = BackUpMoveTarget.builder()
                 .histDate(localDate)
