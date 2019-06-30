@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.zhaoshaung.excelprocess.exception.ProcessExcellException.*;
 import static com.zhaoshaung.excelprocess.utils.Consts.*;
@@ -150,47 +149,4 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         log.info("ExcelProcessServiceImpl process 生成的对象为 = {}", backUpMoveTarget);
         return backUpMoveTarget;
     }
-
-//    /**
-//     * 处理每个单元格
-//     * @param row 行
-//     * @throws ProcessExcellException
-//     */
-//    private Map<Integer, String> processCells(Row row) throws ProcessExcellException {
-//
-//        //行号
-//        int rowIndex = row.getRowNum();
-//        Map<Integer, String> map = Maps.newHashMap();
-//        for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
-//            Cell cell = row.getCell(cellNum);
-//            CellType cellType = ExcelEnum.getExcelEnum(cellNum).getCellType();
-//
-//            //列号
-//            int columnIndex = cell.getColumnIndex();
-//            System.out.println(cell.getCellType());
-//
-//            String value = StringUtils.EMPTY;
-//            switch (cellType) {
-//                case NUMERIC:
-//                    value = String.valueOf((long) cell.getNumericCellValue());
-//                    break;
-//                case STRING:
-//                    value = cell.getStringCellValue();
-//                    break;
-//                default:
-//                    log.info("ExcelProcessServiceImpl processCells 含有未能识别的格式");
-//
-//            }
-//
-//            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, columnIndex + 1, value);
-//
-//            if (StringUtils.isBlank(value)) {
-//                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + 1 + "行,第" + columnIndex + 1 + "行为空");
-//            }
-//            map.put(cell.getColumnIndex(), Optional.ofNullable(value).orElse(StringUtils.EMPTY));
-//        }
-//        return map;
-//    }
-
-
 }
