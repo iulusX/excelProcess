@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>上传</title>
+    <style>
+        h4 {
+            margin: 10px 0;
+        }
+
+        .uploadBox {
+            margin-top: 20px;
+            margin-left: 20px;
+            display: inline-block;
+            padding: 12px;
+            color: rgba(0, 0, 0, 0.65);
+            border: 1px solid #ebedf0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .uploadBox:hover {}
+
+        .upload {}
+    </style>
+</head>
+
+<body>
+    <div class="uploadBox">
+        <h4>上传excel</h4>
+        <form method="post" action="" enctype="multipart/form-data">
+            <input type="file" name="uploadFile" class="upload" />
+            <br /><br />
+            <input type="submit" value="上传" />
+        </form>
+    </div>
+</body>
+
+</html>
