@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author xiaoyunfeng
+ * @author zhangzhaoshuang
  * @date 2019-06-29
  * @time 11:52
  * @description 前端返回对象
