@@ -84,12 +84,12 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
 
         //遍历每行, 封装对象，存储
+        //去掉第一行
         Map<Integer, String> valueMap = Maps.newHashMap();
-        for (Row row : sheet) {
-
+        for (int rowNum = 1; rowNum < sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
             BackUpMoveTarget backUpMoveTarget = process(row, valueMap);
             backUpMoveTargetService.saveBackUpMoveTarget(backUpMoveTarget);
-
         }
 
         return true;
