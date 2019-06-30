@@ -106,7 +106,9 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
         //行号
         int rowIndex = row.getRowNum();
+        //每行创建一个新的map
         Map<Integer, String> map = Maps.newHashMap();
+        //处理每行的每个单元格
         for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
             Cell cell = row.getCell(cellNum);
             CellType cellType = ExcelEnum.getExcelEnum(cellNum).getCellType();
@@ -136,8 +138,7 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
             map.put(cell.getColumnIndex(), value);
         }
 
-        map.entrySet().stream().forEach(System.out::println);
-
+        //封装对象，返回
         BackUpMoveTarget backUpMoveTarget = BackUpMoveTarget.builder()
                 .histDate(LocalDate.parse(map.get(HIST_DATE), DATE_FORMATTER))
                 .tech(map.get(TECH))
