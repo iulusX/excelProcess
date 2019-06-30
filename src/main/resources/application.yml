@@ -20,9 +20,10 @@ mybatis-plus:
       db-type: mysql
       field-strategy: not_null
       column-underline: true
-    configuration:
-      map-underscore-to-camel-case: true
-      cache-enabled: false
-      lazy-loading-enabled: true
-      multiple-result-sets-enabled: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    lazy-loading-enabled: true
+    multiple-result-sets-enabled: true
+    call-setters-on-nulls: true
 

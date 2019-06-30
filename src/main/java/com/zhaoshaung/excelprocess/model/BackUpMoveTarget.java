@@ -1,5 +1,7 @@
 package com.zhaoshaung.excelprocess.model;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -36,6 +38,7 @@ public class BackUpMoveTarget extends Model<BackUpMoveTarget> {
     /**
      * 日期
      */
+    @TableField(strategy = FieldStrategy.IGNORED)
     private LocalDate histDate;
     /**
      * 产品

@@ -18,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.zhaoshaung.excelprocess.exception.ProcessExcellException.*;
 import static com.zhaoshaung.excelprocess.utils.Consts.*;
@@ -113,14 +115,12 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
             Cell cell = row.getCell(cellNum);
             CellType cellType = ExcelEnum.getExcelEnum(cellNum).getCellType();
 
-            //列号
-            int columnIndex = cell.getColumnIndex();
-            System.out.println(cell.getCellType());
-
             String value = StringUtils.EMPTY;
             switch (cellType) {
                 case NUMERIC:
-                    value = String.valueOf((long) cell.getNumericCellValue());
+                    if (Objects.nonNull(cell)) {
+                        value = String.valueOf((long) cell.getNumericCellValue());
+                    }
                     break;
                 case STRING:
                     value = cell.getStringCellValue();
@@ -130,17 +130,29 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
 
             }
 
-            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, columnIndex + 1, value);
+            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, cellNum + 1, value);
 
-            if (StringUtils.isBlank(value)) {
-                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + 1 + "行,第" + columnIndex + 1 + "行为空");
-            }
-            map.put(cell.getColumnIndex(), value);
+//            if (StringUtils.isBlank(value)) {
+//                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + (rowIndex + 1) + "行,第" + (cellNum + 1) + "行为空");
+//            }
+            map.put(cellNum, Optional.ofNullable(value).orElse(StringUtils.EMPTY));
         }
 
         //封装对象，返回
+        System.out.println("========" + StringUtils.isNotBlank(map.get(HIST_DATE)));
+
+        LocalDate localDate;
+        if (StringUtils.isNotBlank(map.get(HIST_DATE))){
+            localDate = LocalDate.parse(map.get(HIST_DATE), DATE_FORMATTER);
+        } else{
+            localDate = LocalDate.now();
+        }
+//
+//
+//        System.out.println("============localDate = " + localDate);
+
         BackUpMoveTarget backUpMoveTarget = BackUpMoveTarget.builder()
-                .histDate(LocalDate.parse(map.get(HIST_DATE), DATE_FORMATTER))
+                .histDate(localDate)
                 .tech(map.get(TECH))
                 .stage(map.get(STAGE))
                 .p1Target(map.get(P1_TARGET))
