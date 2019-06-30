@@ -1,11 +1,11 @@
 package com.zhaoshaung.excelprocess.service.impl;
 
 import com.google.common.collect.Maps;
+import com.zhaoshaung.excelprocess.enums.ExcelEnum;
 import com.zhaoshaung.excelprocess.exception.ProcessExcellException;
 import com.zhaoshaung.excelprocess.model.BackUpMoveTarget;
 import com.zhaoshaung.excelprocess.service.BackUpMoveTargetService;
 import com.zhaoshaung.excelprocess.service.ExcelProcessService;
-import com.zhaoshaung.excelprocess.utils.Consts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -17,9 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.zhaoshaung.excelprocess.exception.ProcessExcellException.*;
 import static com.zhaoshaung.excelprocess.utils.Consts.*;
@@ -86,9 +87,9 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         //遍历每行, 封装对象，存储
         //去掉第一行
         Map<Integer, String> valueMap = Maps.newHashMap();
-        for (int rowNum = 1; rowNum < sheet.getLastRowNum(); rowNum++) {
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
-            BackUpMoveTarget backUpMoveTarget = process(row, valueMap);
+            BackUpMoveTarget backUpMoveTarget = processRow(row);
             backUpMoveTargetService.saveBackUpMoveTarget(backUpMoveTarget);
         }
 
@@ -99,32 +100,47 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
      * 处理每行
      *
      * @param row 行
-     * @param map 空map
      * @return 储存对象
      * @throws ProcessExcellException 自定异常
      */
-    private BackUpMoveTarget process(Row row, Map<Integer, String> map) throws ProcessExcellException {
+    private BackUpMoveTarget processRow(Row row) throws ProcessExcellException {
+
         //行号
         int rowIndex = row.getRowNum();
+        Map<Integer, String> map = Maps.newHashMap();
+        for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
+            Cell cell = row.getCell(cellNum);
+            CellType cellType = ExcelEnum.getExcelEnum(cellNum).getCellType();
 
-        for (Cell cell : row) {
             //列号
             int columnIndex = cell.getColumnIndex();
             System.out.println(cell.getCellType());
 
-            if (!Objects.equals(CellType.STRING, cell.getCellType())) {
-                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + "行,请将第" + columnIndex + "列设为文本格式");
+            String value = StringUtils.EMPTY;
+            switch (cellType) {
+                case NUMERIC:
+                    value = String.valueOf((long) cell.getNumericCellValue());
+                    break;
+                case STRING:
+                    value = cell.getStringCellValue();
+                    break;
+                default:
+                    log.info("ExcelProcessServiceImpl processCells 含有未能识别的格式");
+
             }
-            String value = cell.getStringCellValue();
-            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex, columnIndex, value);
+
+            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, columnIndex + 1, value);
 
             if (StringUtils.isBlank(value)) {
-                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + "行,第" + columnIndex + "行为空");
+                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + 1 + "行,第" + columnIndex + 1 + "行为空");
             }
             map.put(cell.getColumnIndex(), value);
         }
+
+        map.entrySet().stream().forEach(System.out::println);
+
         BackUpMoveTarget backUpMoveTarget = BackUpMoveTarget.builder()
-                .histDate(LocalDateTime.parse(map.get(HIST_DATE), Consts.DATE_TIME_FORMATTER))
+                .histDate(LocalDate.parse(map.get(HIST_DATE), DATE_FORMATTER))
                 .tech(map.get(TECH))
                 .stage(map.get(STAGE))
                 .p1Target(map.get(P1_TARGET))
@@ -134,6 +150,47 @@ public class ExcelProcessServiceImpl implements ExcelProcessService {
         log.info("ExcelProcessServiceImpl process 生成的对象为 = {}", backUpMoveTarget);
         return backUpMoveTarget;
     }
+
+//    /**
+//     * 处理每个单元格
+//     * @param row 行
+//     * @throws ProcessExcellException
+//     */
+//    private Map<Integer, String> processCells(Row row) throws ProcessExcellException {
+//
+//        //行号
+//        int rowIndex = row.getRowNum();
+//        Map<Integer, String> map = Maps.newHashMap();
+//        for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
+//            Cell cell = row.getCell(cellNum);
+//            CellType cellType = ExcelEnum.getExcelEnum(cellNum).getCellType();
+//
+//            //列号
+//            int columnIndex = cell.getColumnIndex();
+//            System.out.println(cell.getCellType());
+//
+//            String value = StringUtils.EMPTY;
+//            switch (cellType) {
+//                case NUMERIC:
+//                    value = String.valueOf((long) cell.getNumericCellValue());
+//                    break;
+//                case STRING:
+//                    value = cell.getStringCellValue();
+//                    break;
+//                default:
+//                    log.info("ExcelProcessServiceImpl processCells 含有未能识别的格式");
+//
+//            }
+//
+//            log.info("ExcelProcessServiceImpl process 第{}行，第{}列，值为 = {}", rowIndex + 1, columnIndex + 1, value);
+//
+//            if (StringUtils.isBlank(value)) {
+//                throw new ProcessExcellException(PE_EXCEPTION_CODE, "导入失败, 第" + rowIndex + 1 + "行,第" + columnIndex + 1 + "行为空");
+//            }
+//            map.put(cell.getColumnIndex(), Optional.ofNullable(value).orElse(StringUtils.EMPTY));
+//        }
+//        return map;
+//    }
 
 
 }

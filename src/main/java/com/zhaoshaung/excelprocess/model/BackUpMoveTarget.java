@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -35,7 +36,7 @@ public class BackUpMoveTarget extends Model<BackUpMoveTarget> {
     /**
      * 日期
      */
-    private LocalDateTime histDate;
+    private LocalDate histDate;
     /**
      * 产品
      */
